@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:search_github/providers/page_route_provider.dart';
 
-import 'package:search_github/screens/user.dart';
-
 import 'package:search_github/widgets.dart/app_bar_theme.dart';
 
 import 'package:provider/provider.dart';
@@ -23,14 +21,13 @@ class RepoScreen extends StatefulWidget {
 }
 
 class _RepoScreenState extends State<RepoScreen> {
-  var current_page = 0;
-  int per_page = 10;
   final controller = ScrollController();
   var page = 2;
   var _init = true;
   var _isLoading = false;
   bool hasMore = true;
-  var _finishScroll = false;
+
+  bool isSorted = false;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -43,37 +40,40 @@ class _RepoScreenState extends State<RepoScreen> {
           .then((_) {
         setState(() {
           _isLoading = false;
+          if (widget.repos.length < 25) {
+            hasMore = false;
+          }
         });
       });
     }
     _init = false;
+  }
 
-    @override
-    void initState() {
-      // TODO: implement initState
-      super.initState();
-      controller.addListener(() {
-        if (controller.position.maxScrollExtent == controller.offset) {
-          if (widget.repos.length < per_page) {
-            hasMore = false;
-          }
-          Provider.of<RepositoryProvider>(context, listen: false)
-              .getRepoList(repo: widget.repos, page: page++, per_page: per_page)
-              .then((_) {
-            setState(() {
-              _isLoading = false;
-            });
-          });
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      if (controller.position.maxScrollExtent == controller.offset) {
+        if (widget.repos.length < 25) {
+          hasMore = false;
+          _isLoading = false;
         }
-      });
-    }
+      }
+      @override
+      void dispose() {
+        // TODO: implement dispose
+        super.dispose();
+        controller.dispose();
+      }
 
-    @override
-    void dispose() {
-      // TODO: implement dispose
-      super.dispose();
-      controller.dispose();
-    }
+      Provider.of<RepositoryProvider>(context, listen: false)
+          .getRepoList(repo: widget.repos, page: page++)
+          .then((_) {
+        setState(() {
+          hasMore = true;
+        });
+      });
+    });
   }
 
   @override
@@ -107,12 +107,31 @@ class _RepoScreenState extends State<RepoScreen> {
                     'Total results: ${repo.count}',
                     style: const TextStyle(color: Colors.white),
                   ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          isSorted = !isSorted;
+                        });
+                      },
+                      icon: Icon(Icons.sort),
+                      label: Text(
+                        isSorted ? 'Sort by stars' : 'Sort alphabetically',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: ListView.builder(
                       controller: controller,
                       itemCount: repo.repoList.length + 1,
                       itemBuilder: (context, index) {
                         if (index < repo.repoList.length) {
+                          final sorted = isSorted
+                              ? repo.sortedByStars
+                              : repo.sortedByAlphaList;
+                          final repos = sorted[index];
                           return InkWell(
                             hoverColor: Colors.grey,
                             child: Card(
@@ -124,14 +143,28 @@ class _RepoScreenState extends State<RepoScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: ListTile(
                                       leading: OpenUserProfileWidget(
-                                          route, repo, index, context),
-                                      title: AuthorAndRepoName(repo, index),
-                                      subtitle: RepoDescription(repo, index),
-                                      trailing: ForkAndIssuesCount(repo, index),
+                                          route, repo, index, context, repos),
+                                      title: AuthorAndRepoName(
+                                        repos,
+                                        index,
+                                        repo,
+                                      ),
+                                      subtitle: RepoDescription(
+                                        repos,
+                                        index,
+                                        repo,
+                                      ),
+                                      trailing: ForkAndIssuesCount(
+                                          repos, index, repo),
                                     ),
                                   ),
                                   OpenRepositoryButton(
-                                      context, repo, index, route),
+                                    context,
+                                    repos,
+                                    index,
+                                    route,
+                                    repo,
+                                  ),
                                 ],
                               ),
                             ),
@@ -140,10 +173,9 @@ class _RepoScreenState extends State<RepoScreen> {
                           return Padding(
                             padding: const EdgeInsets.all(20),
                             child: Center(
-                              child: hasMore
-                                  ? const CircularProgressIndicator()
-                                  : const Text('No more data to load'),
-                            ),
+                                child: hasMore
+                                    ? const Text('No more data to load')
+                                    : const CircularProgressIndicator()),
                           );
                         }
                       },

@@ -12,7 +12,6 @@ class RepositoryProvider extends ChangeNotifier {
   var _totalCount;
   var url;
   var getAuthor;
-  bool hasMore = true;
   Repository? repositories;
   var finishScroll = false;
 
@@ -20,15 +19,31 @@ class RepositoryProvider extends ChangeNotifier {
     return [..._repositories];
   }
 
+  List<Repository> get sortedByAlphaList {
+    _repositories.sort(
+        (a, b) => a.author!.toLowerCase().compareTo(b.author!.toLowerCase()));
+    return [..._repositories];
+  }
+
   get count {
     return _totalCount;
   }
 
-  Future<void> getRepoList(
-      {required String repo, int page = 1, int per_page = 10}) async {
+  List<Repository> get sortedByStars {
+    _repositories.sort((a, b) => b.stars!.compareTo(a.stars!));
+    return [..._repositories];
+  }
+
+  Future<void> getRepoList({
+    required String repo,
+    int page = 1,
+  }) async {
     try {
+      if (page == 1 && _repositories.isNotEmpty) {
+        _repositories.clear();
+      }
       var url = Uri.parse(
-          '${Api.api}/${Api.github_search}?q=$repo&page=$page&per_page=$per_page');
+          '${Api.api}/${Api.github_search}?q=$repo&page=$page&per_page=25');
 
       final response = await http.get(url);
 
@@ -43,9 +58,5 @@ class RepositoryProvider extends ChangeNotifier {
       notifyListeners();
       // ignore: empty_catches
     } catch (e) {}
-  }
-
-  Future refresh() async {
-    getRepoList(repo: '');
   }
 }

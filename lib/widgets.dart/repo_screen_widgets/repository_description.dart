@@ -1,10 +1,15 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:readmore/readmore.dart';
 
 import '../../providers/repository_provider.dart';
 
-Column RepoDescription(RepositoryProvider repo, int index) {
+Column RepoDescription(
+  repos,
+  int index,
+  RepositoryProvider repo,
+) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -12,14 +17,19 @@ Column RepoDescription(RepositoryProvider repo, int index) {
       const SizedBox(
         height: 10,
       ),
-      repo.repoList[index].description == null
+      repos.description == null
           ? const Text(
               'No description',
               style: TextStyle(color: Colors.white),
             )
-          : Text(
-              '${repo.repoList[index].description}',
+          : ReadMoreText(
+              '${repos.description}',
               style: const TextStyle(color: Colors.white),
+              trimCollapsedText: 'Show more',
+              trimExpandedText: 'Show less',
+              colorClickableText: Colors.greenAccent,
+              trimLines: 2,
+              trimMode: TrimMode.Line,
             ),
     ],
   );

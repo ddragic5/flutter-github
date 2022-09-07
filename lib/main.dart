@@ -23,6 +23,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
+          value: RepositoryProvider(),
+        ),
+        ChangeNotifierProvider.value(
           value: UserProvider(),
         ),
         ChangeNotifierProvider.value(
@@ -33,9 +36,6 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: UserFollowingProvider(),
-        ),
-        ChangeNotifierProvider.value(
-          value: RepositoryProvider(),
         ),
         ChangeNotifierProvider.value(
           value: onTapProvider(),

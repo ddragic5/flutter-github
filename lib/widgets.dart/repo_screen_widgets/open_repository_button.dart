@@ -1,14 +1,17 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../providers/page_route_provider.dart';
 import '../../providers/repository_provider.dart';
-import '../../screens/details.dart';
 
-ButtonBar OpenRepositoryButton(BuildContext context, RepositoryProvider repo,
-    int index, onPressedProvider route) {
+ButtonBar OpenRepositoryButton(
+  BuildContext context,
+  repos,
+  int index,
+  onPressedProvider route,
+  RepositoryProvider repo,
+) {
   return ButtonBar(
     children: <Widget>[
       ClipRRect(
@@ -20,8 +23,8 @@ ButtonBar OpenRepositoryButton(BuildContext context, RepositoryProvider repo,
           child: MaterialButton(
               onPressed: () async {
                 (route.onPressedOpenRepo(
-                    full_name: '${repo.repoList[index].full_name}',
-                    username: '${repo.repoList[index].author}',
+                    full_name: '${repos.full_name}',
+                    username: '${repos.author}',
                     context: context));
               },
               child: const Text(

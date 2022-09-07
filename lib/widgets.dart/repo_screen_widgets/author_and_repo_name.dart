@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 
 import '../../providers/repository_provider.dart';
 
-Row AuthorAndRepoName(RepositoryProvider repo, int index) {
+Row AuthorAndRepoName(
+  repos,
+  int index,
+  RepositoryProvider repo,
+) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       Text(
-        'Author : ${repo.repoList[index].author}',
+        'Author : ${repos.author}',
         style: const TextStyle(color: Colors.white),
       ),
       Text(
-        'Repository name: ${repo.repoList[index].reponame}',
+        'Repository name: ${repos.reponame}',
         style: const TextStyle(color: Colors.white),
       ),
       const SizedBox(

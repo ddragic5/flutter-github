@@ -11,8 +11,6 @@ class SearchScreem extends StatefulWidget {
 }
 
 class _SearchScreemState extends State<SearchScreem> {
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
