@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:search_github/models/repository.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -13,8 +14,8 @@ class RepositoryProvider extends ChangeNotifier {
   var url;
   var getAuthor;
   Repository? repositories;
-  var finishScroll = false;
-
+  var isLoading;
+  bool hasMore = true;
   List<Repository> get repoList {
     return [..._repositories];
   }
@@ -42,6 +43,7 @@ class RepositoryProvider extends ChangeNotifier {
       if (page == 1 && _repositories.isNotEmpty) {
         _repositories.clear();
       }
+
       var url = Uri.parse(
           '${Api.api}/${Api.github_search}?q=$repo&page=$page&per_page=25');
 

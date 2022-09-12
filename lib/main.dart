@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:search_github/providers/on_tap%20provider.dart';
 import 'package:search_github/providers/page_route_provider.dart';
+
 import 'package:search_github/providers/repository_details_provider.dart';
 import 'package:search_github/providers/repository_provider.dart';
-import 'package:search_github/providers/user_followers.dart';
-import 'package:search_github/providers/user_following.dart';
-import 'package:search_github/providers/user_provider.dart';
+import 'package:search_github/providers/user_followers_provider.dart';
+import 'package:search_github/providers/user_following_provider.dart';
+import 'package:search_github/providers/user_provider_provider.dart';
 
-import 'package:search_github/screens/search.dart';
+import 'package:search_github/screens/search_screen.dart';
 
 void main() {
   runApp(const MyApp());

@@ -2,12 +2,13 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:search_github/providers/user_following.dart';
+import 'package:search_github/providers/user_following_provider.dart';
 import 'package:search_github/widgets.dart/app_bar_theme.dart';
 
 import 'package:provider/provider.dart';
 
 import '../providers/on_tap provider.dart';
+import '../providers/repository_provider.dart';
 
 class UserFollowingScreen extends StatefulWidget {
   final String username;
@@ -19,21 +20,18 @@ class UserFollowingScreen extends StatefulWidget {
 
 class _UserFollowingScreenState extends State<UserFollowingScreen> {
   var _init = true;
-  var _isLoading = false;
 
+  final provider = Provider.of<RepositoryProvider>;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
+      provider(context).isLoading = true;
+
       Provider.of<UserFollowingProvider>(context)
           .getFollowingList(widget.username)
           .then((_) {
-        setState(() {
-          _isLoading = false;
-        });
+        provider(context, listen: false).isLoading = false;
       });
     }
     _init = false;
@@ -41,12 +39,13 @@ class _UserFollowingScreenState extends State<UserFollowingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const provider = Provider.of<RepositoryProvider>;
     final repoUrl = Provider.of<onTapProvider>(context);
     final user = Provider.of<UserFollowingProvider>(context);
 
     return Scaffold(
       appBar: appBarTheme(title: 'Following'),
-      body: _isLoading
+      body: provider(context).isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )

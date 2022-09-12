@@ -6,7 +6,8 @@ import 'package:search_github/widgets.dart/app_bar_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/on_tap provider.dart';
-import '../providers/user_followers.dart';
+import '../providers/repository_provider.dart';
+import '../providers/user_followers_provider.dart';
 
 class UserFollowersScreen extends StatefulWidget {
   final String username;
@@ -17,22 +18,18 @@ class UserFollowersScreen extends StatefulWidget {
 }
 
 class _UserFollowersScreenState extends State<UserFollowersScreen> {
+  final provider = Provider.of<RepositoryProvider>;
   var _init = true;
-  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
+      provider(context).isLoading = true;
       Provider.of<UserFollowerProvider>(context)
           .getFollowersList(widget.username)
           .then((_) {
-        setState(() {
-          _isLoading = false;
-        });
+        provider(context, listen: false).isLoading = false;
       });
     }
     _init = false;
@@ -40,12 +37,13 @@ class _UserFollowersScreenState extends State<UserFollowersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<RepositoryProvider>;
     final user = Provider.of<UserFollowerProvider>(context);
     final repoUrl = Provider.of<onTapProvider>(context);
 
     return Scaffold(
       appBar: appBarTheme(title: 'Followers'),
-      body: _isLoading
+      body: provider(context).isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )

@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../../providers/user_provider.dart';
-import '../../screens/user_followers.dart';
-import '../../screens/user_following.dart';
+import '../../providers/user_provider_provider.dart';
+import '../../screens/user_followers_screen.dart';
+import '../../screens/user_following_screen.dart';
 
 Column UserInfoFollowingFollowersPublicRepositories(
     BuildContext context, UserProvider user) {

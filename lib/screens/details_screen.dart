@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:search_github/providers/on_tap%20provider.dart';
 
 import '../providers/repository_details_provider.dart';
-import '../providers/user_provider.dart';
+import '../providers/repository_provider.dart';
+import '../providers/user_provider_provider.dart';
 import '../widgets.dart/app_bar_theme.dart';
 import '../widgets.dart/details_page_widgets/author_image_name/author_image_name_column.dart';
 
@@ -27,31 +28,26 @@ class RepositoryDetails extends StatefulWidget {
 }
 
 class _RepositoryDetailsState extends State<RepositoryDetails> {
+  final provider = Provider.of<RepositoryProvider>;
   var _init = true;
-  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
+      provider(context).isLoading = true;
+
       Provider.of<RepositoryDetailsProvider>(context)
           .detailedRepository('${widget.full_name}')
           .then((_) {
-        setState(() {
-          _isLoading = false;
-        });
+        provider(context, listen: false).isLoading = false;
       });
       Provider.of<UserProvider>(context)
           .getUserProfile('${widget.username}')
           .then(
         (_) {
-          setState(() {
-            _isLoading = false;
-          });
+          provider(context, listen: false).isLoading = false;
         },
       );
     }
@@ -61,13 +57,14 @@ class _RepositoryDetailsState extends State<RepositoryDetails> {
 
   @override
   Widget build(BuildContext context) {
+    const provider = Provider.of<RepositoryProvider>;
     final repo = Provider.of<RepositoryDetailsProvider>(context);
     final user = Provider.of<UserProvider>(context);
     final dateF = DateFormat.yMMMd('en_US');
     final repoUrl = Provider.of<onTapProvider>(context);
     return Scaffold(
         appBar: appBarTheme(title: widget.full_name),
-        body: _isLoading
+        body: provider(context).isLoading
             ? const Center(
                 child: CircularProgressIndicator(),
               )

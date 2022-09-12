@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:search_github/providers/page_route_provider.dart';
-
 import 'package:search_github/widgets.dart/app_bar_theme.dart';
 
 import 'package:provider/provider.dart';
@@ -10,7 +9,7 @@ import '../providers/repository_provider.dart';
 import '../widgets.dart/repo_screen_widgets/author_and_repo_name.dart';
 import '../widgets.dart/repo_screen_widgets/fork_and_issuses_count.dart';
 import '../widgets.dart/repo_screen_widgets/open_repository_button.dart';
-import '../widgets.dart/repo_screen_widgets/open_user_profile_widget.dart';
+import '../widgets.dart/repo_screen_widgets/open_user_profile.dart';
 import '../widgets.dart/repo_screen_widgets/repository_description.dart';
 
 class RepoScreen extends StatefulWidget {
@@ -24,26 +23,23 @@ class _RepoScreenState extends State<RepoScreen> {
   final controller = ScrollController();
   var page = 2;
   var _init = true;
-  var _isLoading = false;
-  bool hasMore = true;
 
   bool isSorted = false;
+  final provider = Provider.of<RepositoryProvider>;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_init) {
-      setState(() {
-        _isLoading = true;
-      });
+      provider(context).isLoading = true;
+
       Provider.of<RepositoryProvider>(context)
           .getRepoList(repo: widget.repos)
           .then((_) {
-        setState(() {
-          _isLoading = false;
-          if (widget.repos.length < 25) {
-            hasMore = false;
-          }
-        });
+        provider(context, listen: false).isLoading = false;
+        if (widget.repos.length < 25) {
+          provider(context, listen: false).hasMore = false;
+        }
       });
     }
     _init = false;
@@ -55,8 +51,8 @@ class _RepoScreenState extends State<RepoScreen> {
     controller.addListener(() {
       if (controller.position.maxScrollExtent == controller.offset) {
         if (widget.repos.length < 25) {
-          hasMore = false;
-          _isLoading = false;
+          provider(context, listen: false).hasMore = false;
+          provider(context, listen: false).isLoading = false;
         }
       }
       @override
@@ -69,9 +65,7 @@ class _RepoScreenState extends State<RepoScreen> {
       Provider.of<RepositoryProvider>(context, listen: false)
           .getRepoList(repo: widget.repos, page: page++)
           .then((_) {
-        setState(() {
-          hasMore = true;
-        });
+        provider(context, listen: false).hasMore = true;
       });
     });
   }
@@ -85,7 +79,7 @@ class _RepoScreenState extends State<RepoScreen> {
       appBar: appBarTheme(
         title: 'Repositories',
       ),
-      body: _isLoading
+      body: provider(context).isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -115,10 +109,10 @@ class _RepoScreenState extends State<RepoScreen> {
                           isSorted = !isSorted;
                         });
                       },
-                      icon: Icon(Icons.sort),
+                      icon: const Icon(Icons.sort),
                       label: Text(
-                        isSorted ? 'Sort by stars' : 'Sort alphabetically',
-                        style: TextStyle(color: Colors.white),
+                        isSorted ? 'Sort alphabetically' : 'Sort by stars',
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ),
@@ -173,7 +167,7 @@ class _RepoScreenState extends State<RepoScreen> {
                           return Padding(
                             padding: const EdgeInsets.all(20),
                             child: Center(
-                                child: hasMore
+                                child: !provider(context).hasMore
                                     ? const Text('No more data to load')
                                     : const CircularProgressIndicator()),
                           );

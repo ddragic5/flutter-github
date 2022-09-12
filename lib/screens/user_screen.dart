@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 
 import 'package:search_github/widgets.dart/app_bar_theme.dart';
 
-import '../providers/user_provider.dart';
+import '../providers/repository_provider.dart';
+import '../providers/user_provider_provider.dart';
 import '../widgets.dart/user_widgets/following_followers_public.dart';
 import '../widgets.dart/user_widgets/user_image.dart';
 
@@ -17,22 +18,19 @@ class UserDetails extends StatefulWidget {
 
 class _UserDetailsState extends State<UserDetails> {
   var _init = true;
-  var _isLoading = false;
-
+  final provider = Provider.of<RepositoryProvider>;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     if (_init) {
       setState(() {
-        _isLoading = true;
+        provider(context, listen: false).isLoading = false;
       });
 
       Provider.of<UserProvider>(context).getUserProfile(widget.username).then(
         (_) {
-          setState(() {
-            _isLoading = false;
-          });
+          provider(context, listen: false).isLoading = false;
         },
       );
     }
@@ -41,10 +39,11 @@ class _UserDetailsState extends State<UserDetails> {
 
   @override
   Widget build(BuildContext context) {
+    const provider = Provider.of<RepositoryProvider>;
     final user = Provider.of<UserProvider>(context);
     return Scaffold(
         appBar: appBarTheme(title: 'User info'),
-        body: _isLoading
+        body: provider(context).isLoading
             ? const Center(
                 child: CircularProgressIndicator(),
               )

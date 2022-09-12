@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:search_github/widgets.dart/details_page_widgets/user_details_page.dart/user_info_view_row.dart';
 
-import '../../../providers/user_provider.dart';
+import '../../../providers/user_provider_provider.dart';
 
 // ignore: non_constant_identifier_names
 Column UserInfoDetailsPage(

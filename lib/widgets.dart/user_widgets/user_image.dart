@@ -3,7 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../providers/user_provider.dart';
+import '../../providers/user_provider_provider.dart';
 
 Column UserImage(UserProvider user) {
   return Column(

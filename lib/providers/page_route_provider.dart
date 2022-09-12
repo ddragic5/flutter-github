@@ -1,9 +1,9 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:search_github/screens/details.dart';
+import 'package:search_github/screens/details_screen.dart';
 
-import '../screens/user.dart';
+import '../screens/user_screen.dart';
 
 // ignore: camel_case_types
 class onPressedProvider extends ChangeNotifier {
