@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         title: 'Github',
-        home: (SearchScreem()),
+        home: (SearchScreen()),
       ),
     );
   }

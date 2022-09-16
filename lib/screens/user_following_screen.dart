@@ -10,39 +10,21 @@ import 'package:provider/provider.dart';
 import '../providers/on_tap provider.dart';
 import '../providers/repository_provider.dart';
 
-class UserFollowingScreen extends StatefulWidget {
+class UserFollowingScreen extends StatelessWidget {
   final String username;
   const UserFollowingScreen({Key? key, required this.username})
       : super(key: key);
-  @override
-  State<UserFollowingScreen> createState() => _UserFollowingScreenState();
-}
-
-class _UserFollowingScreenState extends State<UserFollowingScreen> {
-  var _init = true;
-
-  final provider = Provider.of<RepositoryProvider>;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_init) {
-      provider(context).isLoading = true;
-
-      Provider.of<UserFollowingProvider>(context)
-          .getFollowingList(widget.username)
-          .then((_) {
-        provider(context, listen: false).isLoading = false;
-      });
-    }
-    _init = false;
-  }
 
   @override
   Widget build(BuildContext context) {
     const provider = Provider.of<RepositoryProvider>;
     final repoUrl = Provider.of<onTapProvider>(context);
     final user = Provider.of<UserFollowingProvider>(context);
-
+    Provider.of<UserFollowingProvider>(context)
+        .getFollowingList(username)
+        .then((_) {
+      provider(context, listen: false).isLoading = false;
+    });
     return Scaffold(
       appBar: appBarTheme(title: 'Following'),
       body: provider(context).isLoading
@@ -53,7 +35,7 @@ class _UserFollowingScreenState extends State<UserFollowingScreen> {
               color: Colors.black87,
               child: Column(
                 children: [
-                  Text(widget.username),
+                  Text(username),
                   const SizedBox(
                     height: 10,
                   ),

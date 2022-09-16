@@ -70,7 +70,8 @@ Column UserInfoFollowingFollowersPublicRepositories(
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (ctx) => UserFollowersScreen(
-                            username: '${user.user!.username}'),
+                          username: '${user.user!.username}',
+                        ),
                       ),
                     );
                   },

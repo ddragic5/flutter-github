@@ -17,44 +17,11 @@ import '../widgets.dart/details_page_widgets/repo_details/repo_botom_bar.dart';
 import '../widgets.dart/details_page_widgets/repo_main_container/main_container.dart';
 import '../widgets.dart/details_page_widgets/user_details_page.dart/user_info.dart';
 
-class RepositoryDetails extends StatefulWidget {
+class RepositoryDetails extends StatelessWidget {
   final String? username;
   final String full_name;
   const RepositoryDetails({Key? key, this.username, required this.full_name})
       : super(key: key);
-
-  @override
-  State<RepositoryDetails> createState() => _RepositoryDetailsState();
-}
-
-class _RepositoryDetailsState extends State<RepositoryDetails> {
-  final provider = Provider.of<RepositoryProvider>;
-  var _init = true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (_init) {
-      provider(context).isLoading = true;
-
-      Provider.of<RepositoryDetailsProvider>(context)
-          .detailedRepository('${widget.full_name}')
-          .then((_) {
-        provider(context, listen: false).isLoading = false;
-      });
-      Provider.of<UserProvider>(context)
-          .getUserProfile('${widget.username}')
-          .then(
-        (_) {
-          provider(context, listen: false).isLoading = false;
-        },
-      );
-    }
-
-    _init = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     const provider = Provider.of<RepositoryProvider>;
@@ -62,8 +29,18 @@ class _RepositoryDetailsState extends State<RepositoryDetails> {
     final user = Provider.of<UserProvider>(context);
     final dateF = DateFormat.yMMMd('en_US');
     final repoUrl = Provider.of<onTapProvider>(context);
+    Provider.of<RepositoryDetailsProvider>(context)
+        .detailedRepository('${full_name}')
+        .then((_) {
+      provider(context, listen: false).isLoading = false;
+    });
+    Provider.of<UserProvider>(context).getUserProfile('${username}').then(
+      (_) {
+        provider(context, listen: false).isLoading = false;
+      },
+    );
     return Scaffold(
-        appBar: appBarTheme(title: widget.full_name),
+        appBar: appBarTheme(title: full_name),
         body: provider(context).isLoading
             ? const Center(
                 child: CircularProgressIndicator(),

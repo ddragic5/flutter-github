@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:search_github/screens/repo_screen.dart';
 
-class SearchScreem extends StatefulWidget {
-  const SearchScreem({
+class SearchScreen extends StatelessWidget {
+  const SearchScreen({
     Key? key,
   }) : super(key: key);
 
-  @override
-  State<SearchScreem> createState() => _SearchScreemState();
-}
-
-class _SearchScreemState extends State<SearchScreem> {
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();

@@ -9,35 +9,19 @@ import '../providers/on_tap provider.dart';
 import '../providers/repository_provider.dart';
 import '../providers/user_followers_provider.dart';
 
-class UserFollowersScreen extends StatefulWidget {
+class UserFollowersScreen extends StatelessWidget {
   final String username;
   const UserFollowersScreen({Key? key, required this.username})
       : super(key: key);
-  @override
-  State<UserFollowersScreen> createState() => _UserFollowersScreenState();
-}
-
-class _UserFollowersScreenState extends State<UserFollowersScreen> {
-  final provider = Provider.of<RepositoryProvider>;
-  var _init = true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_init) {
-      provider(context).isLoading = true;
-      Provider.of<UserFollowerProvider>(context)
-          .getFollowersList(widget.username)
-          .then((_) {
-        provider(context, listen: false).isLoading = false;
-      });
-    }
-    _init = false;
-  }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<RepositoryProvider>;
+    const provider = Provider.of<RepositoryProvider>;
+    Provider.of<UserFollowerProvider>(context)
+        .getFollowersList(username)
+        .then((_) {
+      provider(context, listen: false).isLoading = false;
+    });
     final user = Provider.of<UserFollowerProvider>(context);
     final repoUrl = Provider.of<onTapProvider>(context);
 
@@ -54,7 +38,7 @@ class _UserFollowersScreenState extends State<UserFollowersScreen> {
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Text(
-                      widget.username,
+                      username,
                       style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
