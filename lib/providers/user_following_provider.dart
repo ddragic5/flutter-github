@@ -10,7 +10,7 @@ import '../utils/constants.dart';
 class UserFollowingProvider extends ChangeNotifier {
   List<User>? _userFollowing;
   User? following;
-
+  bool isLoading = true;
   List<User> get followingList {
     return [...?_userFollowing];
   }
@@ -31,7 +31,7 @@ class UserFollowingProvider extends ChangeNotifier {
         );
         newList.add(following);
       }
-
+      isLoading = false;
       _userFollowing = newList;
 
       notifyListeners();

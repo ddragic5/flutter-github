@@ -55,12 +55,6 @@ class _RepoScreenState extends State<RepoScreen> {
           provider(context, listen: false).isLoading = false;
         }
       }
-      @override
-      void dispose() {
-        // TODO: implement dispose
-        super.dispose();
-        controller.dispose();
-      }
 
       Provider.of<RepositoryProvider>(context, listen: false)
           .getRepoList(repo: widget.repos, page: page++)

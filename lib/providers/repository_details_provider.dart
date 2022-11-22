@@ -9,13 +9,15 @@ import '../utils/constants.dart';
 
 class RepositoryDetailsProvider with ChangeNotifier {
   RepositoryDetails? repository;
-
+  bool isLoading = true;
   Future<void> detailedRepository(String full_name) async {
     final url = Uri.parse('${Api.api}/repos/$full_name');
 
-    try {
-      final response = await http.get(url);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
       final jsonD = json.decode(response.body) as Map<String, dynamic>;
+
+      notifyListeners();
       repository = RepositoryDetails(
         id: jsonD['id'],
         reponame: jsonD['name'],
@@ -33,9 +35,12 @@ class RepositoryDetailsProvider with ChangeNotifier {
         watchers_count: jsonD['watchers_count'],
         default_branch: jsonD['default_branch'],
       );
-
+      isLoading = false;
       notifyListeners();
       // ignore: empty_catches
-    } catch (e) {}
+    } else
+      (e) {
+        print(e);
+      };
   }
 }

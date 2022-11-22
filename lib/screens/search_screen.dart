@@ -9,6 +9,7 @@ class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = TextEditingController();
+    var focusNode = FocusNode();
     return Scaffold(
       backgroundColor: Colors.black87,
       body: Column(
@@ -19,6 +20,10 @@ class SearchScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 TextField(
+                  onSubmitted: (value) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => RepoScreen(repos: value)));
+                  },
                   controller: controller,
                   style: const TextStyle(
                     color: Colors.white,

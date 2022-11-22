@@ -36,7 +36,7 @@ class UserFollowersScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(15.0),
                     child: Text(
                       username,
                       style: const TextStyle(color: Colors.white, fontSize: 20),

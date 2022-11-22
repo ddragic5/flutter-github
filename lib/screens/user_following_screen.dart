@@ -35,7 +35,13 @@ class UserFollowingScreen extends StatelessWidget {
               color: Colors.black87,
               child: Column(
                 children: [
-                  Text(username),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Text(
+                      username,
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),

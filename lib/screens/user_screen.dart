@@ -17,12 +17,12 @@ class UserDetails extends StatelessWidget {
     const provider = Provider.of<RepositoryProvider>;
     final user = Provider.of<UserProvider>(context);
     Provider.of<UserProvider>(context).getUserProfile(username).then((_) {
-      provider(context, listen: false).isLoading = false;
+      provider(context, listen: false);
     });
 
     return Scaffold(
         appBar: appBarTheme(title: 'User info'),
-        body: provider(context).isLoading
+        body: user.isLoading
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -32,7 +32,7 @@ class UserDetails extends StatelessWidget {
                   const SizedBox(
                     height: 200,
                   ),
-                  UserImage(user),
+                  UserImage(user, context),
                   UserInfoFollowingFollowersPublicRepositories(context, user),
                 ]),
               ));

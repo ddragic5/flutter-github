@@ -17,81 +17,103 @@ import '../widgets.dart/details_page_widgets/repo_details/repo_botom_bar.dart';
 import '../widgets.dart/details_page_widgets/repo_main_container/main_container.dart';
 import '../widgets.dart/details_page_widgets/user_details_page.dart/user_info.dart';
 
-class RepositoryDetails extends StatelessWidget {
+class RepositoryDetails extends StatefulWidget {
   final String? username;
   final String full_name;
   const RepositoryDetails({Key? key, this.username, required this.full_name})
       : super(key: key);
+
+  @override
+  State<RepositoryDetails> createState() => _RepositoryDetailsState();
+}
+
+class _RepositoryDetailsState extends State<RepositoryDetails> {
+  final repos = Provider.of<RepositoryDetailsProvider>;
+  @override
+  void didChangeDependencies() {
+    repos(context).isLoading = true;
+    Provider.of<RepositoryDetailsProvider>(context)
+        .detailedRepository('${widget.full_name}')
+        .then((_) {
+      repos(context, listen: false).isLoading = false;
+    });
+    Provider.of<UserProvider>(context)
+        .getUserProfile('${widget.username}')
+        .then(
+      (_) {
+        repos(context, listen: false).isLoading = false;
+      },
+    );
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    const provider = Provider.of<RepositoryProvider>;
     final repo = Provider.of<RepositoryDetailsProvider>(context);
     final user = Provider.of<UserProvider>(context);
     final dateF = DateFormat.yMMMd('en_US');
     final repoUrl = Provider.of<onTapProvider>(context);
-    Provider.of<RepositoryDetailsProvider>(context)
-        .detailedRepository('${full_name}')
-        .then((_) {
-      provider(context, listen: false).isLoading = false;
-    });
-    Provider.of<UserProvider>(context).getUserProfile('${username}').then(
-      (_) {
-        provider(context, listen: false).isLoading = false;
-      },
-    );
+
     return Scaffold(
-        appBar: appBarTheme(title: full_name),
-        body: provider(context).isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Container(
-                color: Colors.black87,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AuthorImageAndName(context, repo),
-                          Column(
-                            children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 100),
-                                  decoration: BoxDecoration(
-                                      color:
-                                          const Color.fromRGBO(51, 51, 51, 0),
-                                      border: Border.all(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(10)),
-                                  height: 200,
-                                  width: 200,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: UserInfoDetailsPage(
-                                        dateF, user, context),
+        appBar: appBarTheme(title: widget.full_name),
+        body: Container(
+            padding: EdgeInsets.all(20),
+            child: repos(context).isLoading
+                ? Center(
+                    child: Container(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(
+                    color: Colors.black87,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              AuthorImageAndName(context, repo),
+                              Column(
+                                children: <Widget>[
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 100),
+                                      decoration: BoxDecoration(
+                                          color: const Color.fromRGBO(
+                                              51, 51, 51, 0),
+                                          border:
+                                              Border.all(color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      height: 200,
+                                      width: 200,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: UserInfoDetailsPage(
+                                            dateF, user, context),
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          MainContainerView(dateF, repo, context),
+                          RedButtonDetailsPage(repoUrl, repo),
+                          RepoInfoBottomContainer(repo),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      MainContainerView(dateF, repo, context),
-                      RedButtonDetailsPage(repoUrl, repo),
-                      RepoInfoBottomContainer(repo),
-                    ],
-                  ),
-                ),
-              ));
+                    ),
+                  )));
   }
 }

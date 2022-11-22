@@ -14,7 +14,7 @@ class RepositoryProvider extends ChangeNotifier {
   var url;
   var getAuthor;
   Repository? repositories;
-  var isLoading;
+  var isLoading = true;
   bool hasMore = true;
   List<Repository> get repoList {
     return [..._repositories];
